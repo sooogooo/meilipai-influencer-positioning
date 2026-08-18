@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>评测原理 · 医美博主定位评估</title>
+<meta name="description" content="定位评估的模型原理：信任五型 × 变现五式共二十五格矩阵、信任贴现率的构成、132 题题库的槽位设计与评分规则。">
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:#EFE6D8}
+  body{margin:0;font-family:"Noto Sans SC","PingFang SC",sans-serif;color:#1C1821;
+       text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+  a{color:#8F2338;text-decoration:none}
+  a:hover{text-decoration:underline;text-underline-offset:3px}
+  .col{max-width:720px;margin:0 auto;background:#FBF7F0;min-height:100dvh;
+       border-left:1px solid rgba(28,24,33,.08);border-right:1px solid rgba(28,24,33,.08);
+       box-shadow:0 0 60px rgba(74,18,32,.06);padding:0 0 72px}
+  .hero{background:radial-gradient(120% 60% at 50% 0%,rgba(185,148,63,.22),rgba(23,19,31,0) 65%),#17131F;
+        color:#FBF7F0;padding:64px 30px 46px;text-align:center}
+  .hero .kicker{font-size:11px;letter-spacing:.4em;color:#C75A6B;margin-bottom:14px}
+  .hero h1{font-family:"Noto Serif SC","Songti SC",serif;font-weight:400;font-size:30px;
+           letter-spacing:.14em;margin:0 0 12px}
+  .hero p{font-size:13px;line-height:2;color:rgba(251,247,240,.72);max-width:34em;margin:0 auto}
+  .back{display:inline-block;margin:18px 30px 0;font-size:12.5px;letter-spacing:.12em;color:#6B6470}
+  main{padding:0 30px}
+  h2{font-family:"Noto Serif SC","Songti SC",serif;font-weight:500;font-size:19px;letter-spacing:.16em;
+     color:#1C1821;margin:52px 0 6px;display:flex;align-items:baseline;gap:10px}
+  h2 .no{font-family:"Cormorant Garamond",serif;font-size:14px;color:#B9943F;letter-spacing:.08em}
+  .rule{border:none;border-top:1px solid rgba(185,148,63,.45);width:56px;margin:0 0 18px}
+  p.lead{font-size:14px;line-height:2.05;color:#3C3540;text-wrap:pretty}
+  p.note{font-size:12.5px;line-height:1.95;color:#6B6470}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+  .card{border:1px solid rgba(28,24,33,.14);border-radius:10px;padding:14px 16px;background:#fff}
+  .card b{display:block;font-family:"Noto Serif SC","Songti SC",serif;font-size:14.5px;
+          font-weight:500;letter-spacing:.08em;margin-bottom:6px}
+  .card span{font-size:12px;line-height:1.85;color:#6B6470;display:block}
+  .card .tag{display:inline-block;font-size:10.5px;letter-spacing:.14em;color:#B9943F;margin-bottom:8px}
+  table{border-collapse:collapse;width:100%;font-size:12px;margin:18px 0}
+  th,td{border:1px solid rgba(28,24,33,.14);padding:8px 6px;text-align:center;vertical-align:middle}
+  thead th{font-family:"Noto Sans SC",sans-serif;font-weight:500;font-size:11.5px;
+           letter-spacing:.06em;background:rgba(23,19,31,.035)}
+  tbody th{font-weight:500;background:rgba(23,19,31,.035);font-size:11.5px;white-space:nowrap}
+  td .nm{font-family:"Noto Serif SC","Songti SC",serif;font-size:12.5px;letter-spacing:.03em;display:block}
+  td .mk{font-size:9.5px;letter-spacing:.1em;display:block;margin-top:3px;color:#B9943F}
+  td.reb{background:rgba(143,35,56,.05)}
+  td.reb .mk{color:#8F2338}
+  .scroll{overflow-x:auto;margin:18px 0}
+  .scroll table{min-width:560px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:#6B6470;margin:6px 0 0}
+  .legend i{font-style:normal;margin-right:5px}
+  .formula{border:1px solid rgba(185,148,63,.4);border-radius:10px;background:rgba(185,148,63,.05);
+           padding:16px 20px;margin:20px 0;font-size:13px;line-height:2;color:#3C3540;text-align:center}
+  .formula b{font-family:"Cormorant Garamond","Noto Serif SC",serif;font-weight:500;color:#8F2338}
+  ol,ul{padding-left:1.3em;font-size:13px;line-height:2.05;color:#3C3540}
+  li{margin:4px 0}
+  .foot{margin-top:56px;padding-top:18px;border-top:1px solid rgba(28,24,33,.12);
+        font-size:11.5px;line-height:2;color:#9B93A1;text-align:center;letter-spacing:.04em}
+  @media(max-width:640px){
+    .hero h1{font-size:24px}
+    main,.back{padding-left:20px;padding-right:20px;margin-left:0;margin-right:0}
+    .cards{grid-template-columns:1fr}
+    .col{padding-bottom:56px}
+  }
+</style>
+</head>
+<body>
+<div class="col">
+  <a class="back" href="/">← 返回评测</a>
+  <div class="hero">
+    <div class="kicker">SELF-POSITIONING</div>
+    <h1>评测原理</h1>
+    <p>这不是心理测试，是一套给内容创作者的自我校准工具。<br>
+       它只回答两个问题：你的信任从哪来，你的钱从哪来。<br>
+       两轴相交，就是你此刻在行业里的位置。</p>
+  </div>
+  <main>
+
+    <h2><span class="no">01</span>模型总览</h2>
+    <hr class="rule">
+    <p class="lead">「信任贴现率」借用了金融里的概念：把未来的收益流折算成今天的钱，折损的比例就是贴现率。放到创作者身上——你今天每接一单、每带一次客，都在把读者对你的信任提前变现。变现越急、越不挑方式，贴现率越高；高到一定程度，信任池就见底了。</p>
+    <p class="lead">模型由两条互相独立的轴构成：一条测<b>信任的来源</b>（你的话语权凭什么成立），一条测<b>变现的结构</b>（你的钱从哪条管道流进来）。两轴都是单选题的累计结果，不掺主观打分。</p>
+
+    <h2><span class="no">02</span>第一轴：信任从哪来（五型）</h2>
+    <hr class="rule">
+    <div class="cards">
+      <div class="card"><span class="tag">QUAL</span><b>执业资质型</b><span>你说话有分量，因为你能负责。最难获得，也最难被替换。</span></div>
+      <div class="card"><span class="tag">EXP</span><b>亲身体验型</b><span>你的脸是证据。说服力最强，生命周期最短。</span></div>
+      <div class="card"><span class="tag">INTEL</span><b>信息差型</b><span>你知道行情、真假和价格。有效，但会随行业透明化贬值。</span></div>
+      <div class="card"><span class="tag">AES</span><b>审美判断型</b><span>你说得清什么叫做得好。离交易最远，最难被抄走。</span></div>
+      <div class="card"><span class="tag">IND</span><b>产业视角型</b><span>你看得见供给侧。受众是同行，粉丝量在这里意义很小。</span></div>
+    </div>
+    <p class="note">五种信任没有高下之分，只有生命周期和可变现半径的差别。多数人是混合体，模型取累计得分最高者为主型、次高者为副型，并用两者的分差判断你的定位是否清晰（见第 05 节）。</p>
+
+    <h2><span class="no">03</span>第二轴：钱从哪来（五式）</h2>
+    <hr class="rule">
+    <div class="cards">
+      <div class="card"><span class="tag">C2C</span><b>C 端付费</b><span>用户直接给你钱。你的利益和他们一致。</span></div>
+      <div class="card"><span class="tag">AD</span><b>B 端广告</b><span>机构给你钱。分寸靠自律，风险可控。</span></div>
+      <div class="card"><span class="tag">REB</span><b>渠道返佣</b><span>按到店或成交结算。你越推得动，读者越可能被推错。</span></div>
+      <div class="card"><span class="tag">OWN</span><b>自营</b><span>你自己就是商家。评价你的标准整个换一套。</span></div>
+      <div class="card"><span class="tag">NONE</span><b>暂不变现</b><span>还在攒。攒本身没有问题，问题是第一次怎么花。</span></div>
+    </div>
+
+    <h2><span class="no">04</span>二十五格定位矩阵</h2>
+    <hr class="rule">
+    <p class="lead">五型信任 × 五式变现，构成 25 种位置。每一种都有名字，因为每一种都真实存在，也各有各的活法和死法。</p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>信任 \ 变现</th><th>C 端付费</th><th>B 端广告</th><th style="color:#8F2338">渠道返佣</th><th>自营</th><th>暂不变现</th></tr></thead>
+      <tbody>
+        <tr><th>执业资质</th>
+          <td><span class="nm">出诊型</span><span class="mk">稳</span></td>
+          <td><span class="nm">背书型</span></td>
+          <td class="reb"><span class="nm">资质套现型</span><span class="mk">高危</span></td>
+          <td><span class="nm">医生老板型</span></td>
+          <td><span class="nm">蓄水型</span><span class="mk">稳</span></td></tr>
+        <tr><th>亲身体验</th>
+          <td><span class="nm">陪跑型</span><span class="mk">稳</span></td>
+          <td><span class="nm">种草型</span></td>
+          <td class="reb"><span class="nm">线上渠道型</span><span class="mk">高危</span></td>
+          <td><span class="nm">体验转商家</span></td>
+          <td><span class="nm">素人记录型</span></td></tr>
+        <tr><th>信息差</th>
+          <td><span class="nm">避坑顾问型</span><span class="mk">稳</span></td>
+          <td><span class="nm">测评型</span></td>
+          <td class="reb"><span class="nm">中介型</span><span class="mk">高危</span></td>
+          <td><span class="nm">比价商家</span></td>
+          <td><span class="nm">情报观察型</span></td></tr>
+        <tr><th>审美判断</th>
+          <td><span class="nm">审美顾问型</span></td>
+          <td><span class="nm">审美种草型</span><span class="mk">稳</span></td>
+          <td class="reb"><span class="nm">审美中介型</span><span class="mk">高危</span></td>
+          <td><span class="nm">风格自营型</span></td>
+          <td><span class="nm">纯审美内容型</span></td></tr>
+        <tr><th>产业视角</th>
+          <td><span class="nm">行业顾问型</span><span class="mk">稳</span></td>
+          <td><span class="nm">行业媒体型</span><span class="mk">稳</span></td>
+          <td class="reb"><span class="nm">角色错配型</span><span class="mk">高危</span></td>
+          <td><span class="nm">从业者自营</span><span class="mk">稳</span></td>
+          <td><span class="nm">行业观察型</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="legend">
+      <span><i style="color:#B9943F">◆ 稳</i>结构稳定格：信任类型与变现方式的利益方向一致</span>
+      <span><i style="color:#8F2338">◆ 高危</i>渠道返佣列：利益与读者错位，整列判定为高危</span>
+      <span><i style="color:#9B93A1">◆ 空白</i>过渡态：可走，但需要自觉维持分寸</span>
+    </div>
+    <p class="note">读法：先横着找到你的信任主型那一行，再竖着找到你当前主要的变现方式那一列，交叉处就是你的位置。矩阵不评判好坏——「资质套现型」也能赚很多年，只是它消耗的正是你最贵的资产，贴现率会把这一点算出来。</p>
+
+    <h2><span class="no">05</span>信任贴现率如何计算</h2>
+    <hr class="rule">
+    <p class="lead">贴现率是一个 0–100 的刻度数，由<b>变现方式的基线</b>加上<b>七个风险刻度</b>加权构成：</p>
+    <div class="formula">
+      贴现率 ＝ 基线[变现方式] ＋ 机构依赖×4 ＋ 披露缺失×5 ＋ 私信导流×4<br>
+      ＋ 收钱质疑×5 ＋ 互动背离×4 ＋ 转化停滞×3 ＋ 存量缺失×4<span style="display:block;font-size:11px;color:#9B93A1;margin-top:4px">（上限 100）</span>
+    </div>
+    <p class="lead">基线反映的是变现结构本身的利益错位程度：</p>
+    <table>
+      <thead><tr><th>变现方式</th><th>C 端付费</th><th>暂不变现</th><th>B 端广告</th><th>自营</th><th>渠道返佣</th></tr></thead>
+      <tbody><tr><th>基线分</th><td>8</td><td>6</td><td>22</td><td>26</td><td>40</td></tr></tbody>
+    </table>
+    <p class="lead">七个刻度各自 0–3 分，来自「商务边界」「信任健康度」「长期筹码」三个分类的题目：</p>
+    <ol>
+      <li><b>机构依赖</b>——收入里有多少需要别人点头才到账；</li>
+      <li><b>披露缺失</b>——收了钱不说，权重最高（×5），因为它的爆仓方式最剧烈；</li>
+      <li><b>私信导流</b>——不在内容里出现、只在私信里发生的带客；</li>
+      <li><b>收钱质疑</b>——评论区「你是不是收钱了」的出现频率，通常比数据早半年；</li>
+      <li><b>互动背离</b>——粉丝在涨、完播和互动在跌，粉丝数是最后倒下的指标；</li>
+      <li><b>转化停滞</b>——读者从关注到付费的路径是否还能走通；</li>
+      <li><b>存量缺失</b>——完全停更后还有没有人来找你，测的是存量而非流量。</li>
+    </ol>
+    <p class="lead">最终分档：<b>0–25 低贴现</b>（还在攒，没在花）、<b>26–50 中贴现</b>（在花，还没伤到本）、<b>51–75 高贴现</b>（在透支未来的收益流）、<b>76–100 极高贴现</b>（接近清仓，请立刻停一下）。</p>
+
+    <h2><span class="no">06</span>题库设计与抽题规则</h2>
+    <hr class="rule">
+    <p class="lead">题库共 <b>132 题</b>，按「测量槽位」组织成 12 个槽位（6 个分类 × 每类 2 个维度），每个槽位 11 道<b>同构题</b>——它们从不同角度测量同一件事，选项的计分权重模式完全一致。</p>
+    <div class="scroll">
+    <table>
+      <thead><tr><th>分类</th><th>槽位（测量维度）</th><th>题型与计分</th></tr></thead>
+      <tbody>
+        <tr><th rowspan="1">信任从哪来</th><td>评论区之问 · 杀伤攻击 · 读者画像</td><td>五选一，每项给对应信任型 2 分（攻击题 3 分，画像题为混合权重）</td></tr>
+        <tr><th>内容与定位</th><td>内容高频主题</td><td>五选一，每项 2 分</td></tr>
+        <tr><th>钱从哪来</th><td>收入结构 · 机构依赖</td><td>收入结构五选一定变现方式；机构依赖 0–3 刻度</td></tr>
+        <tr><th>商务边界</th><td>合作披露 · 私信导流</td><td>各 0–3 刻度（披露缺失最高 2）</td></tr>
+        <tr><th>信任健康度</th><td>质疑频率 · 互动背离</td><td>各 0–3 刻度</td></tr>
+        <tr><th>长期筹码</th><td>转化周期 · 停更存量</td><td>转化 0–2 刻度；存量 0/1/3 三档</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="lead">每次测评，系统从<b>每个槽位随机抽取 1 题</b>，组成当次 12 题的卷子。因此：</p>
+    <ul>
+      <li>同一次测评内题目<b>绝不重复</b>（槽位之间天然互斥）；</li>
+      <li>每次进入或点「重新测评」都会重新抽题，组合超过千亿种，背题无效；</li>
+      <li>无论抽到哪套题，各维度的计分结构<b>完全等价</b>——分数之间的可比性不因抽题而漂移。</li>
+    </ul>
+
+    <h2><span class="no">07</span>评分与判定规则</h2>
+    <hr class="rule">
+    <ol>
+      <li><b>信任主型</b>：累计五型得分最高者；副型为次高者。</li>
+      <li><b>定位清晰度</b>：主副分差 ≥3 为「清晰」，≥1.5 为「偏向明显」，否则「模糊」——两者只差一两分时，说明你还在两头下注。</li>
+      <li><b>变现方式</b>：由「收入结构」槽的作答直接确定。</li>
+      <li><b>综合判定</b>：落在渠道返佣列判「高危」；落在八个结构稳定格判「稳定」；其余为「过渡态」。</li>
+      <li><b>结果对比</b>：结果链接中携带当次题组信息，粘贴上一次的链接即可对比两个时点的定位与贴现率变化。</li>
+    </ol>
+
+    <h2><span class="no">08</span>口径与边界</h2>
+    <hr class="rule">
+    <p class="note">本工具用于自我校准，贴现率为经验刻度，不是临床结论，也不是财务或法律建议。它最好的用法是每季度测一次，看数字的<b>方向</b>而不是绝对值——贴现率持续上升，说明你正在把信任换成现金；持续下降，说明你在往回收。位置没有对错，但代价是有价格的。</p>
+
+    <div class="foot">医美博主定位评估 · 评测原理<br>美丽派 · 美学实验室</div>
+  </main>
+</div>
+</body>
+</html>
